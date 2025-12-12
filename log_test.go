@@ -13,6 +13,16 @@ func TestLogxText(t *testing.T) {
 	l.Error("Error", "data4", "date5")
 }
 
+func TestLogxTextPrefixSufxxArgs(t *testing.T) {
+	l := New()
+	l.PrefixArgs = append(l.PrefixArgs, "A", "B", "C")
+	l.SuffixArgs = append(l.SuffixArgs, "E", "O", "F")
+	l.Debug("Debug", "data1", "date2")
+	l.Info("Info", "data2", "date3")
+	l.Warn("Warn", "data3", "date4")
+	l.Error("Error", "data4", "date5")
+}
+
 func TestLogxTextLevel(t *testing.T) {
 	l := New()
 	l.Level = LevelInfo

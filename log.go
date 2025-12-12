@@ -80,6 +80,8 @@ type Logger struct {
 	BeforeHooks []func(l Level, data []byte) error  // 日志格式钩子函数，当一条日志被格式化完成，还没有输出前回调
 	AfterHooks  []func(l Level, data []byte) error  // 日志格式钩子函数，当一条日志被格式化完成，输出后进行回调
 	Formater    Formater                            // 日志的输出格式
+	PrefixArgs  []any                               // args第一组参数，设置该参数每次输出日志都会固定输出
+	SuffixArgs  []any                               // args最后一组参数，设置该参数每次输出日志都会固定输出
 }
 
 func (l *Logger) Debug(msg string, a ...any) {
@@ -114,8 +116,9 @@ func (l *Logger) Log(level Level, msg string, args []any) {
 	entry.Time = time.Now()
 	entry.Message = msg
 	entry.Args = entry.Args[:0]
+	entry.Args = append(entry.Args, l.PrefixArgs...)
 	entry.Args = append(entry.Args, args...)
-
+	entry.Args = append(entry.Args, l.SuffixArgs...)
 	if l.AddSource {
 		var pc [1]uintptr
 		runtime.Callers(3, pc[:])
