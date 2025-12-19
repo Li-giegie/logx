@@ -5,6 +5,11 @@ import (
 	"testing"
 )
 
+func TestLogx(t *testing.T) {
+	Default.AddSource = true
+	Info("info -----")
+}
+
 func TestLogxText(t *testing.T) {
 	l := New()
 	l.Debug("Debug", "data1", "date2")
@@ -15,9 +20,10 @@ func TestLogxText(t *testing.T) {
 
 func TestLogxTextPrefixSufxxArgs(t *testing.T) {
 	l := New()
+	l.AddSource = true
 	DefaultFormat.(*TextFormat).Color = true
-	l.PrefixArgs = append(l.PrefixArgs, "A", "B", "C")
-	l.SuffixArgs = append(l.SuffixArgs, "E", "O", "F")
+	// l.PrefixArgs = append(l.PrefixArgs, "A", "B", "C")
+	// l.SuffixArgs = append(l.SuffixArgs, "E", "O", "F")
 	l.Debug("Debug", "data1", "date2")
 	l.Info("Info", "data2", "date3")
 	l.Warn("Warn", "data3", "date4")

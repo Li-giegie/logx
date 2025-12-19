@@ -214,21 +214,17 @@ func itoa(i int, wid int) []byte {
 }
 
 func Debug(msg string, a ...any) {
-	Default.Debug(msg, a)
+	Default.Log(LevelDebug, msg, a)
 }
 
 func Info(msg string, a ...any) {
-	Default.Info(msg, a)
+	Default.Log(LevelInfo, msg, a)
 }
 
 func Warn(msg string, a ...any) {
-	Default.Warn(msg, a)
+	Default.Log(LevelWarn, msg, a)
 }
 
 func Error(msg string, a ...any) {
-	Default.Error(msg, a)
-}
-
-func Log(level Level, msg string, a []any) {
-	Default.Log(level, msg, a)
+	Default.Log(LevelError, msg, a)
 }
