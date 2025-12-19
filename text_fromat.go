@@ -15,16 +15,21 @@ type TextFormat struct {
 
 func (t *TextFormat) Format(buffer *[]byte, entry *Entry) {
 	if t.Color {
-		*buffer = append(*buffer, entry.Level.ColorString()...)
+		*buffer = append(*buffer, entry.Level.Color()...)
+		*buffer = append(*buffer, ' ')
+		if t.FormatTime != nil {
+			t.FormatTime(buffer, entry.Time)
+		} else {
+			FormatTime(buffer, entry.Time)
+		}
 	} else {
+		if t.FormatTime != nil {
+			t.FormatTime(buffer, entry.Time)
+		} else {
+			FormatTime(buffer, entry.Time)
+		}
+		*buffer = append(*buffer, ' ')
 		*buffer = append(*buffer, entry.Level.String()...)
-	}
-	if t.FormatTime != nil {
-		*buffer = append(*buffer, ' ')
-		t.FormatTime(buffer, entry.Time)
-	} else {
-		*buffer = append(*buffer, ' ')
-		FormatTime(buffer, entry.Time)
 	}
 	if entry.Frame != nil {
 		*buffer = append(*buffer, ' ')
@@ -34,7 +39,6 @@ func (t *TextFormat) Format(buffer *[]byte, entry *Entry) {
 			FormatCaller(buffer, entry.Frame)
 		}
 	}
-
 	if len(entry.Message) > 0 {
 		*buffer = append(*buffer, ' ')
 		*buffer = append(*buffer, entry.Message...)
@@ -48,6 +52,7 @@ func (t *TextFormat) Format(buffer *[]byte, entry *Entry) {
 			*buffer = fmt.Appendln(*buffer, entry.Args...)
 		}
 	}
+
 	if len(*buffer) == 0 || (*buffer)[len(*buffer)-1] != '\n' {
 		*buffer = append(*buffer, '\n')
 	}

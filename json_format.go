@@ -15,14 +15,15 @@ type JSONFormat struct {
 }
 
 func (f *JSONFormat) Format(buffer *[]byte, entry *Entry) {
-	*buffer = append(*buffer, `{"level":"`...)
-	*buffer = append(*buffer, entry.Level.String()...)
-	*buffer = append(*buffer, `","time":"`...)
+	*buffer = append(*buffer, `{"time":"`...)
 	if f.FormatTime != nil {
 		f.FormatTime(buffer, entry.Time)
 	} else {
 		*buffer = entry.Time.AppendFormat(*buffer, time.RFC3339Nano)
 	}
+	*buffer = append(*buffer, `","level":"`...)
+	*buffer = append(*buffer, entry.Level.String()...)
+
 	*buffer = append(*buffer, `","caller":"`...)
 	if entry.Logger.AddSource {
 		if f.FormatCaller != nil {

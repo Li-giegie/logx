@@ -15,6 +15,7 @@ func TestLogxText(t *testing.T) {
 
 func TestLogxTextPrefixSufxxArgs(t *testing.T) {
 	l := New()
+	DefaultFormat.(*TextFormat).Color = true
 	l.PrefixArgs = append(l.PrefixArgs, "A", "B", "C")
 	l.SuffixArgs = append(l.SuffixArgs, "E", "O", "F")
 	l.Debug("Debug", "data1", "date2")

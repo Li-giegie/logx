@@ -13,14 +13,14 @@ type TextFieldFormat struct {
 }
 
 func (t *TextFieldFormat) Format(buffer *[]byte, entry *Entry) {
-	*buffer = append(*buffer, "level=\""...)
-	*buffer = append(*buffer, entry.Level.String()...)
-	*buffer = append(*buffer, "\" time=\""...)
+	*buffer = append(*buffer, "time=\""...)
 	if t.FormatTime != nil {
 		t.FormatTime(buffer, entry.Time)
 	} else {
 		FormatTime(buffer, entry.Time)
 	}
+	*buffer = append(*buffer, "\" level=\""...)
+	*buffer = append(*buffer, entry.Level.String()...)
 	if entry.Frame != nil {
 		*buffer = append(*buffer, "\" caller=\""...)
 		if t.FormatCaller != nil {

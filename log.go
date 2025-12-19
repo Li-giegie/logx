@@ -14,14 +14,20 @@ var (
 	DefaultFormat Formater  = new(TextFormat)
 	DefaultOutput io.Writer = os.Stdout
 	BufferPool              = sync.Pool{
-		New: func() interface{} {
+		New: func() any {
 			buf := make([]byte, 1024)
 			return &buf
 		},
 	}
 	entryPool = sync.Pool{
-		New: func() interface{} {
+		New: func() any {
 			return new(Entry)
+		},
+	}
+	pcPool = sync.Pool{
+		New: func() any {
+			pc := make([]uintptr, 1)
+			return &pc
 		},
 	}
 )
@@ -50,12 +56,13 @@ func (l Level) String() string {
 		return "UNKNOWN" + strconv.Itoa(int(l))
 	}
 }
-func (l Level) ColorString() string {
+
+func (l Level) Color() string {
 	switch l {
 	case LevelDebug:
-		return "\u001B[32mDEBUG\033[0m"
+		return "\u001B[37mDEBUG\033[0m"
 	case LevelInfo:
-		return "\u001B[34mINFO\033[0m"
+		return "\u001B[36mINFO\033[0m"
 	case LevelWarn:
 		return "\u001B[33mWARN\033[0m"
 	case LevelError:
@@ -120,9 +127,10 @@ func (l *Logger) Log(level Level, msg string, args []any) {
 	entry.Args = append(entry.Args, args...)
 	entry.Args = append(entry.Args, l.SuffixArgs...)
 	if l.AddSource {
-		var pc [1]uintptr
-		runtime.Callers(3, pc[:])
-		frame, _ := runtime.CallersFrames(pc[:]).Next()
+		pc := pcPool.Get().(*[]uintptr)
+		runtime.Callers(3, *pc)
+		frame, _ := runtime.CallersFrames(*pc).Next()
+		pcPool.Put(pc)
 		entry.Frame = &frame
 	}
 	for _, hook := range l.EntryHooks {
